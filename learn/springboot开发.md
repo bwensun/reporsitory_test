@@ -17,7 +17,7 @@ resourceUtil获取路径
 	重写addInterceptors并添加拦截器
 
 3. mybatis配置
-	
+	关于spring中mybatis的执行原理：
 
 	1. 添加mybatis依赖
 ```xml
@@ -37,3 +37,5 @@ resourceUtil获取路径
 	3. 在启动类在上加上注解@MapperScan("com.neo.mapper")，启动时自动搜索所有mapper文件，
 	或者在dao上加上@mapper注解（@reporsitory也是要的）
 	4. 书写mapper.xml和dao
+
+4. 异步调用
