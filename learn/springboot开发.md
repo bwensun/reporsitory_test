@@ -80,7 +80,13 @@ resourceUtil获取路径
 			5. NOT_SUPPORTED：以非事务方式运行，如果当前存在事务，则把当前事务挂起。
 			6. NEVER：以非事务方式运行，如果当前存在事务，则抛出异常。
 			7. NESTED：如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于REQUIRED
+		4. @Transactional(rollbackFor = Throwable.class)，指定回滚的情况，这就是出先任何错误和异常都回滚事务
 
+8. 文件的上传下载
+	1. 前端上传指定格式为，我们以MultipartFile，对象来接受，在指定目录存储即可
+	2. 将需要下载的文件以流的形式写如HttpServletResponse对象中，直接返回即可，需要注意的是需要设置响应体的格式
+
+9. 
 
 8. 集成mybatis插件
 http://tengj.top/2017/12/20/springboot11/
@@ -90,3 +96,6 @@ https://tonydeng.github.io/rfc6241-zh/
 
 MockMvc
 https://blog.csdn.net/xiao_xuwen/article/details/52890730
+
+为什么不用jsp:
+https://blog.csdn.net/piantoutongyang/article/details/65446892
