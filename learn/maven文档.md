@@ -44,8 +44,97 @@ windows下：配置环境变量,我下载的3.5.3版本，
 				maven中存在依赖的传递，假设A依赖于B,B依赖于C，我们说A对于B是第一直接依赖，B对于C是第二直接依赖，A对于C是传递性依赖
 			依赖调接规则：
 				1. 路径最近者优先
-				2. 路径相同先声明这优先
+				2. 路径相同先声明者优先
+			统一定义版本：
+				先定义    
+				<properties>  
+	        		<springframework.version>1.5.6</springframework.version>  
+	    		</properties>
+	    		后引用
+	    		<version>${springframework.version}</version>
 
+
+5. 仓库
+	在Maven世界中，任何一个依赖、插件或者项目构建的输出，都可以称为构件
+	Maven可以在某个位置统一存储所有Maven项目共享的构件，这个统一的位置就是仓库
+		1. gav和本地maven仓库映射：groupId/artifactId/version/artifactId-version.packaging
+	    2. 本地仓库地址默认为：Default: ${user.home}/.m2/repository,可以自己修改<localRepository>/path/to/local/repo</localRepository>来修改
+	    3. maven默认都有一个中央仓库，远程仓库，本地仓库为空时就需要从远程仓库下载，但是中央仓库的下载速度常常有限制，尤其是在国内，
+	    	常常配置为上私服，开发先从私服中请求，没有则私服从外部缓存在给予提供
+	    	<!-- 配置远程仓库 -->
+			    <repositories>
+			        <repository>
+			            <id>jboss</id>
+			            <name>JBoss Repository</name>
+			            <url>http://repository.jboss.com/maven2/</url>
+			            <releases>
+			                <enabled>true</enabled>
+			                <updatePolicy>daily</updatePolicy>
+			            </releases>
+			            <snapshots>
+			                <enabled>false</enabled>
+			                <checksumPolicy>warn</checksumPolicy>
+			            </snapshots>
+			            <layout>default</layout>
+			        </repository>
+			    </repositories>
+			repository:在repositories元素下，可以使用repository子元素声明一个或者多个远程仓库
+			id：仓库声明的唯一id，尤其需要注意的是，Maven自带的中央仓库使用的id为central，如果其他仓库声明也使用该id，就会覆盖中央仓库的配置
+			name：仓库的名称，让我们直观方便的知道仓库是哪个，暂时没发现其他太大的含义
+			url：指向了仓库的地址，一般来说，该地址都基于http协议，Maven用户都可以在浏览器中打开仓库地址浏览构件
+			releases和snapshots：用来控制Maven对于发布版构件和快照版构件的下载权限。需要注意的是enabled子元素，该例中releases的enabled值为true，表示开启JBoss仓库的发布版本下载支持，而snapshots的enabled值为false，表示关闭JBoss仓库的快照版本的下载支持。根据该配置，Maven只会从JBoss仓库下载发布版的构件，而不会下载快照版的构件
+			layout：元素值default表示仓库的布局是Maven2及Maven3的默认布局，而不是Maven1的布局。基本不会用到Maven1的布局
+			其他：对于releases和snapshots来说，除了enabled，它们还包含另外两个子元素updatePolicy和checksumPolicy。
+				1：元素updatePolicy用来配置Maven从远处仓库检查更新的频率，默认值是daily，表示Maven每天检查一次。其他可用的值包括：never-从不检查更新；always-每次构建都检查更新；interval：X-每隔X分钟检查一次更新（X为任意整数）。
+				2：元素checksumPolicy用来配置Maven检查校验和文件的策略。当构建被部署到Maven仓库中时，会同时部署对应的检验和文件。在下载构件的时候，Maven会验证校验和文件，如果校验和验证失败，当checksumPolicy的值为默认的warn时，Maven会在执行构建时输出警告信息，其他可用的值包括：fail-Maven遇到校验和错误就让构建失败；ignore-使Maven完全忽略校验和错误
+		4. 配置认证信息
+		认证一般配置在settings.xml中，尽自己可见
+		<settings>
+      		...
+     	 <!--配置远程仓库认证信息-->
+		    <servers>
+		         <server>
+		              <id>releases</id>
+		             <username>admin</username>
+		             <password>admin123</password>
+		         </server>
+		    </servers>
+    		...
+		</settings>
+		5. 部署到远程仓库
+		编辑项目的pom.xml文件。配置distributionManagement元素
+		<distributionManagement>
+	        <repository>
+	            <id>releases</id>
+	            <name>public</name>
+	            <url>http://59.50.95.66:8081/nexus/content/repositories/releases</url>
+	        </repository>
+	        <snapshotRepository>
+	            <id>snapshots</id>
+	            <name>Snapshots</name>
+	            <url>http://59.50.95.66:8081/nexus/content/repositories/snapshots</url>
+	        </snapshotRepository>
+		</distributionManagement>
+		配置好了就运行命令mvn clean deploy，Maven就会将项目构建输出的构件部署到配置对应的远程仓库
+		6. 配置镜像
+		国外仓库下载jar包太慢，可以配置国内镜像，需要在settings.xml文件中修改，阿里云镜像如下
+		<mirrors>
+		    <mirror>
+		      <id>alimaven</id>
+		      <name>aliyun maven</name>
+		      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+		      <mirrorOf>central</mirrorOf>        
+		    </mirror>
+  		</mirrors>
+		镜像相关属性：
+			<mirrorOf>*<mirrorOf>:匹配所有远程仓库
+			<mirrorOf>external:*<mirrorOf>:匹配所有远程仓库，使用localhost的除外，使用file://协议的除外。也就是说，匹配所有不在本机上的远程仓库
+			<mirrorOf>repo1,repo2<mirrorOf>:匹配仓库repo1h和repo2，使用逗号分隔多个远程仓库
+			<mirrorOf>*,!repo1<mirrorOf>:匹配所有远程仓库，repo1除外，使用感叹号将仓库从匹配中排除
+			需要注意的是，由于镜像仓库完全屏蔽了被镜像仓库，当镜像仓库不稳定或者停止服务的时候，Maven仍将无法访问被镜像仓库，因而将无法下载构件
+		7. 仓库服务搜索地址
+			1. Sonatype Nexus：https://repository.sonatype.org/
+			2. MVNrepository：http://mvnrepository.com/
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
