@@ -57,6 +57,48 @@ redis:是一个key-value数据库
 				zrange key max min withscores 返回score在min和max之间的zset
 				zcount key min max 返回zset中score在min和max之间的value
 				zincrby key int(累加值) value
+	订阅发布模型：
+		redis同样支持发布订阅模型
+		命令：
+			订阅：subscribe channel(频道名)
+			发布：publish channel(频道名) message
+			即使关闭后重新订阅，丢失的信息即丢失无法获取
+		java实现：
+
+	事务：
+		开启事务： multi
+		事务提交： exec
+
+	数据备份与恢复:
+		save: 备份当前redis数据库,该命令将会在redis安装目录中创建dump.rdb,恢复数据则需要将备份文件移动到
+		redis安装目录并启动服务，获取redis目录可以使用config
+		ngsave:
+		后台执行save
+		持久化：
+			实际使用之中，由于redis中的数据是存储在内存中，重启之后就全部丢失，redis支持的持久化可以
+			将数据写到磁盘上，重启后都读取恢复数据
+			RDB:
+				默认的存储方式，快照存储
+				dbfilename dump.rdb
+				# save <seconds> <changes>
+				save 900 1    #当有一条Keys数据被改变时，900秒刷新到Disk一次
+				save 300 10   #当有10条Keys数据被改变时，300秒刷新到Disk一次
+				save 60 10000 #当有10000条Keys数据被改变时，60秒刷新到Disk一次
+				redis中的RDB任意时刻都是可用的，因为其写操作是在一个新进程中进行的。 当生成一个新的RDB文件时，Redis生成的子进程会先将数据写到一个临时文件中，然后通过原子性rename系统调用将临时文件重命名为RDB文件
+				同时，Redis的RDB文件也是Redis主从同步内部实现中的一环。
+					第一次Slave向Master同步的实现是： Slave向Master发出同步请求，Master先dump出rdb文件，然后将rdb文件全量传输给slave，然后Master把缓存的命令转发给Slave，初次同步完成。
+					第二次以及以后的同步实现是： Master将变量的快照直接实时依次发送给各个Slave。 但不管什么原因导致Slave和Master断开重连都会重复以上两个步骤的过程。
+				事实上RDB有点像定时调度，实际之中发生问题自最后一次同步之后的内容都会丢失
+			AOF（Append-only file）
+				更加安全的方式，已追加的方式来写入文件之中，恢复数据时只需要将步骤再走一遍即可，
+				开启aof需要将redis.conf中的ppendonly参数开启:
+				 appendonly yes         #启用aof持久化方式
+				 # appendfsync always   #每次收到写命令就立即强制写入磁盘，最慢的，但是保证完全的持久化，不推荐使用
+				 appendfsync everysec     #每秒钟强制写入磁盘一次，在性能和持久化方面做了很好的折中，推荐
+				 # appendfsync no #完全依赖OS的写入，一般为30秒左右一次，性能最好但是持久化最没有保证，不被推荐。
+				 
+
+
 
 
 

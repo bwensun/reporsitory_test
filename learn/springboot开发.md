@@ -87,7 +87,7 @@ resourceUtil获取路径
 	2. 将需要下载的文件以流的形式写如HttpServletResponse对象中，直接返回即可，需要注意的是需要设置响应体的格式
 
 9. 发送邮件
-	
+	已完成
 
 10. 集成mybatis插件
 http://tengj.top/2017/12/20/springboot11/
@@ -98,4 +98,5 @@ https://blog.csdn.net/xiao_xuwen/article/details/52890730
 为什么不用jsp:
 https://blog.csdn.net/piantoutongyang/article/details/65446892
 
-11. 
+11. 集成消息队列
+
