@@ -94,4 +94,18 @@
 	ps axjf # 查看连同一部分进程树状态  
 9. time命令
 	该命令用于测算一个命令（即程序）的执行时间。它的使用非常简单，就像平时输入命令一样，不过在命令的前面加入一个time即可
-	
+
+10. ./configure --prefix=/usr/local/目录 
+	Configure是一个可执行脚本，它有很多选项，在待安装的源码路径下使用命令./configure –help输出详细的选项列表。
+	其中--prefix选项是配置安装的路径，如果不配置该选项，安装后可执行文件默认放在/usr /local/bin，库文件默认放在/usr/local/lib，配置文件默认放在/usr/local/etc，其它的资源文件放在/usr /local/share，比较凌乱。
+	如果配置--prefix可以把所有资源文件放在/usr/local/test的路径中，不会杂乱，用了—prefix选项的另一个好处是卸载软件或移植软件。当某个安装的软件不再需要时，只须简单的删除该安装目录，就可以把软件卸载得干干净净；移植软件只需拷贝整个目录到另外一个机器即可
+
+11. service命令：
+service命令是Redhat Linux兼容的发行版中用来控制系统服务的实用工具，它以启动、停止、重新启动和关闭系统服务，还可以显示所有系统服务的当前状态
+	语法：service(选项)(参数)
+	选项值：-h：显示帮助信息；--status-all：显示所服务的状态
+	参数：
+		服务名：自动要控制的服务名，即/etc/init.d目录下的脚本文件名；
+		控制命令：系统服务脚本支持的控制命令
+	https://www.cnblogs.com/wangtao_20/p/3645690.html
+	https://www.cnblogs.com/web424/p/6761153.html
