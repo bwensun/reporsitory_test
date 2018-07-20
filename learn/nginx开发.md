@@ -25,6 +25,75 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 	配置子配置文件读取：使用Include
 	  include /etc/nginx/conf.d/*.conf;
   	  include /etc/nginx/sites-enabled/*;
+
+	location配置详解：
+	location [modifier] match {
+    ...
+	}
+	匹配规则:
+		啥都没： 和后面的match进行匹配
+		= : 精确匹配
+		~ : 大小写敏感的正则匹配
+		~*:大小写不敏感的正则匹配
+		^~:非正则匹配
+	匹配顺序：
+		(location =) > (location 完整路径) > (location ^~ 路径) 
+		> (location ~,~* 正则顺序) > (location 部分起始路径) > (/)
+	root指令：
+		匹配替换ip+端口号,最终得到的路径为 root + match，注意match前最好要有斜杠，在linux中
+	多斜杠视为单斜杠，保持前面一直有斜杠可以避免出错，root中第一个出现斜杠表示从根目录出发，比如
+	root:/usr/local/nginx/  match为/static 这样比较好，访问安装目录下文件最好使用alias
+	alias: static  match： static
+	alias指令：
+		其替换规则是连match一并替换，同样的路径alias需要多写点
+	index指令：
+		只处理以/结尾的uri
+		其处理逻辑如下：
+			对index指令的文件做顺序查找，看文件是否存在
+			如存在则就把文件加到/后，发起redirect,重新访问
+			若不存在则index指令结束，执行其他content
+	rewrite指令：
+		使用nginx提供的全局变量或自己设置的变量，结合正则表达式和标志位实现url重写以及重定向。rewrite只能放在server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用
+		举例：访问路径为http://oss.yogovi.com/user/findById?id=123,rewrite替换的内容即为/user/findById,除去域名和参数
+		语法:rewrite regex replacement [flag]
+		更改统一域名下获取资源的路径
+		flag:
+			last : 相当于Apache的[L]标记，表示完成rewrite
+			break : 停止执行当前虚拟主机的后续rewrite指令集
+			redirect : 返回302临时重定向，地址栏会显示跳转后的地址
+			permanent : 返回301永久重定向，地址栏会显示跳转后的地址
+		if:if(condition){...}
+			concation:
+				表达式只有一个变量时，值为空或者任何以0开头的字符串都会为false
+				比较变量和内容使用=和！=
+				~正则匹配，~*不区分大小写的匹配，！~区分大小写的不匹配
+				-f和!-f用来判断是否存在文件
+				-d和!-d用来判断是否存在目录
+				-e和!-e用来判断是否存在文件或目录
+				-x和!-x用来判断文件是否可执行
+			全局变量：
+				$args ： #这个变量等于请求行中的参数，同$query_string
+				$content_length ： 请求头中的Content-length字段。
+				$content_type ： 请求头中的Content-Type字段。
+				$document_root ： 当前请求在root指令中指定的值。
+				$host ： 请求主机头字段，否则为服务器名称。
+				$http_user_agent ： 客户端agent信息
+				$http_cookie ： 客户端cookie信息
+				$limit_rate ： 这个变量可以限制连接速率。
+				$request_method ： 客户端请求的动作，通常为GET或POST。
+				$remote_addr ： 客户端的IP地址。
+				$remote_port ： 客户端的端口。
+				$remote_user ： 已经经过Auth Basic Module验证的用户名。
+				$request_filename ： 当前请求的文件路径，由root或alias指令与URI请求生成。
+				$scheme ： HTTP方法（如http，https）。
+				$server_protocol ： 请求使用的协议，通常是HTTP/1.0或HTTP/1.1。
+				$server_addr ： 服务器地址，在完成一次系统调用后可以确定这个值。
+				$server_name ： 服务器名称。
+				$server_port ： 请求到达服务器的端口号。
+				$request_uri ： 包含请求参数的原始URI，不包含主机名，如：”/foo/bar.php?arg=baz”。
+				$uri ： 不带请求参数的当前URI，$uri不包含主机名，如”/foo/bar.html”。
+				$document_uri ： 与$uri相同。
+
 4. 反向代理：
 	正向和反向代理
 		正向代理：一般代理过程，A想获取服务器C的资源，但用于某些原因不直接访问服务器C，于是请求代理服务器B，服务器B去请求服务器C，将获得结果转发给A
