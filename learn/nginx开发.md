@@ -47,6 +47,7 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 	alias指令：
 		其替换规则是连match一并替换，同样的路径alias需要多写点
 	index指令：
+	index 用于设定我们只输入域名后访问的默认首页地址
 		只处理以/结尾的uri
 		其处理逻辑如下：
 			对index指令的文件做顺序查找，看文件是否存在
@@ -71,17 +72,17 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 				-d和!-d用来判断是否存在目录
 				-e和!-e用来判断是否存在文件或目录
 				-x和!-x用来判断文件是否可执行
-			全局变量：
+		全局变量：
 				$args ： #这个变量等于请求行中的参数，同$query_string
 				$content_length ： 请求头中的Content-length字段。
 				$content_type ： 请求头中的Content-Type字段。
 				$document_root ： 当前请求在root指令中指定的值。
 				$host ： 请求主机头字段，否则为服务器名称。
-				$http_user_agent ： 客户端agent信息
+	客户端分流	$http_user_agent ： 客户端agent信息
 				$http_cookie ： 客户端cookie信息
 				$limit_rate ： 这个变量可以限制连接速率。
 				$request_method ： 客户端请求的动作，通常为GET或POST。
-				$remote_addr ： 客户端的IP地址。
+	限制访问		$remote_addr ： 客户端的IP地址。 
 				$remote_port ： 客户端的端口。
 				$remote_user ： 已经经过Auth Basic Module验证的用户名。
 				$request_filename ： 当前请求的文件路径，由root或alias指令与URI请求生成。
@@ -92,7 +93,7 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 				$server_port ： 请求到达服务器的端口号。
 				$request_uri ： 包含请求参数的原始URI，不包含主机名，如：”/foo/bar.php?arg=baz”。
 				$uri ： 不带请求参数的当前URI，$uri不包含主机名，如”/foo/bar.html”。
-				$document_uri ： 与$uri相同。
+				$document_uri ： 与$uri相同
 
 4. 反向代理：
 	正向和反向代理
@@ -110,6 +111,8 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 		注意：
 			1. 正向代理是代理服务器代理请求者，反向代理服务器代理的是资源服务器
 			2. 正向代理是是需要对代理服务器进行设置的，也就是说他知道这是代理的，反向代理增就是正常请求
+	代理设置：
+
 
 5. ngx_http_gzip_module:压缩静态资源，提升性能
 
@@ -151,3 +154,6 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 https://nginx.rails365.net/chapters/2.html
 
 https://docshome.gitbooks.io/nginx-docs/content/%E4%BB%8B%E7%BB%8D/%E5%88%9D%E5%AD%A6%E8%80%85%E6%8C%87%E5%8D%97.html
+
+配置文件：
+http://seanlook.com/2015/05/17/nginx-install-and-config/
