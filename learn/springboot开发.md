@@ -89,7 +89,47 @@ resourceUtil获取路径
 9. 发送邮件
 	已完成
 
-10. 集成mybatis插件
+10. AOP
+	1. 添加依赖：
+
+	2. 配置注解接口：
+		名字随意，但是需要加上@Retention(RetentionPolicy.RUNTIME),@Target(ElementType.METHOD),@Documented注解
+	3. 配置切面切点：
+		@Aspect,@Component注解在类上，@Pointcut定义切点
+		切点表达式：指出切面的通知应该从哪里织入应用的执行流
+		规则：@Pointcut("execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern)throws-pattern?)")	
+			1. modifier-pattern：表示方法的修饰符
+			2. ret-type-pattern：表示方法的返回值
+			3. declaring-type-pattern?：表示方法所在的类的路径
+			4. name-pattern：表示方法名
+			5. param-pattern：表示方法的参数
+			6. throws-pattern：表示方法抛出的异常
+		注意：
+		1. 其中后面跟着“?”的是可选项。
+		2. 在各个pattern中，可以使用"*"来表示匹配所有
+		3. 在param-pattern中，可以指定具体的参数类型，多个参数间用“,”隔开，
+			各个也可以用“*”来表示匹配任意类型的参数，如(String)表示匹配一个String参数的方法；(*,String)表示匹配有两个参数的方法，第一个参数可以是任意类型，而第二个参数是String类型。
+		4. 可以用(..)表示零个或多个任意的方法参数
+		5. 在切点中使用bean,在注解上Pointcut()中使用操作符！&|,在@before注解里面为and or not，
+	4. 将配置注解注解在相应的类或方法上：
+	补充：
+		AspectJ提供了五种定义通知的标注：
+			@Before：前置通知，在调用目标方法之前执行通知定义的任务
+			@After：后置通知，在目标方法执行结束后，无论执行结果如何都执行通知定义的任务
+			@After-returning：后置通知，在目标方法执行结束后，如果执行成功，则执行通知定义的任务
+			@After-throwing：异常通知，如果目标方法执行过程中抛出异常，则执行通知定义的任务
+			@Around：环绕通知，在目标方法执行前和执行后，异常，都需要执行通知定义的任务
+		其他切点的配置：
+			1. this()是用来限定方法所属的类，比如this(com.tianmaying.service.BlogServiceInterface)表示实现了com.tianmaying.service.BlogServiceInterface的所有类。如果this括号内是具体类而不是接口的话，则表示单个类。
+			2. @annotation表示具有某个标注的方法，比如@annotation(org.springframework.transaction.annotation.Transactional)表示被Transactional标注的方法
+			3. args 表示方法的参数属于一个特定的类
+			4. within 表示方法属于一个特定的类
+			5. target 表示方法所属的类它们对应的加了@的版本则表示对应的类具有某个标注
+		
+11. 集成消息队列
+
+其他
+集成mybatis插件
 http://tengj.top/2017/12/20/springboot11/
 https://blog.csdn.net/isea533/article/details/42102297
 https://tonydeng.github.io/rfc6241-zh/
@@ -98,5 +138,5 @@ https://blog.csdn.net/xiao_xuwen/article/details/52890730
 为什么不用jsp:
 https://blog.csdn.net/piantoutongyang/article/details/65446892
 
-11. 集成消息队列
+
 
