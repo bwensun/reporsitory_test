@@ -98,5 +98,22 @@ https://blog.csdn.net/xiao_xuwen/article/details/52890730
 为什么不用jsp:
 https://blog.csdn.net/piantoutongyang/article/details/65446892
 
-11. 集成消息队列
+11. 使用swagger来构建restful API
+	RESTFUL:
+		资源表现层状态转化
+		传统请求通过URL来描述行为，如create，delete等；RESTful请求通过URL来描述资源
+		RESTful请求通过HTTP请求的方法来描述行为，比如DELETE，POST，PUT等，并且使用HTTP状态码来表示不同的结果
+		RESTful请求通过JSON来交换数据
+		RESTful只是一种风格，并不是一种强制性的标准
+	引入依赖：
+	<dependency>
+	    <groupId>io.springfox</groupId>
+	    <artifactId>springfox-swagger2</artifactId>
+	    <version>2.6.1</version>
+	</dependency>
+	<dependency>
+	    <groupId>io.springfox</groupId>
+	    <artifactId>springfox-swagger-ui</artifactId>
+	    <version>2.6.1</version>
+	</dependency>
 

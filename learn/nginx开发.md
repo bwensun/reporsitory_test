@@ -47,12 +47,10 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 	alias指令：
 		其替换规则是连match一并替换，同样的路径alias需要多写点
 	index指令：
-	index 用于设定我们只输入域名后访问的默认首页地址
-		只处理以/结尾的uri
-		其处理逻辑如下：
-			对index指令的文件做顺序查找，看文件是否存在
-			如存在则就把文件加到/后，发起redirect,重新访问
-			若不存在则index指令结束，执行其他content
+	只处理以/结尾的uri，用于指定索引文件，文件名可以包含变量，
+	按照文件做顺序查找，看文件是否存在，如存在则就把文件加到/后，发起redirect,重新访问
+				index 用于设定我们只输入域名后访问的默认首页地址		
+
 	rewrite指令：
 		使用nginx提供的全局变量或自己设置的变量，结合正则表达式和标志位实现url重写以及重定向。rewrite只能放在server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用
 		举例：访问路径为http://oss.yogovi.com/user/findById?id=123,rewrite替换的内容即为/user/findById,除去域名和参数
@@ -112,7 +110,8 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 			1. 正向代理是代理服务器代理请求者，反向代理服务器代理的是资源服务器
 			2. 正向代理是是需要对代理服务器进行设置的，也就是说他知道这是代理的，反向代理增就是正常请求
 	代理设置：
-
+		在location模块使用proxy_pass指令，如proxy_pass:http://www.baidu.com, 需要注意的是localtion的匹配路径一定
+		要在路径最前面带上斜杠，否则会出现访问404，
 
 5. ngx_http_gzip_module:压缩静态资源，提升性能
 
