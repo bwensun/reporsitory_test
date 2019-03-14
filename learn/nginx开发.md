@@ -41,7 +41,7 @@ http_gzip_static_module就是负责压缩的，http_ssl_module就是负责加密
 		> (location ~,~* 正则顺序) > (location 部分起始路径) > (/)
 	root指令：
 		匹配替换ip+端口号,最终得到的路径为 root + match，注意match前最好要有斜杠，在linux中
-	多斜杠视为单斜杠，保持前面一直有斜杠可以避免出错，root中第一个出现斜杠表示从根目录出发，比如
+	多斜杠视为单斜杠，保持前面一直有斜杠可以避免出错，root中第一个出现斜杠表示从根目录出发(linux目录)，比如
 	root:/usr/local/nginx/  match为/static 这样比较好，访问安装目录下文件最好使用alias
 	alias: static  match： static
 	alias指令：
